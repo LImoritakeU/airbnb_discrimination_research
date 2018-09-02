@@ -5,7 +5,7 @@ from airbnb.tasks import crawl_twitter, dates_list
 from twitter_xpath import *
 
 def main():
-    path = Path("/home/shihhao/results").mkdir()
+    path = Path("/home/shihhao/results").mkdir(exist_ok=True)
     date_format = "%Y/%m/%d"
 
     for since, until in dates_list():
