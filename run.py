@@ -1,12 +1,11 @@
 from celery import group
-import os
+from pathlib import Path
 
 from airbnb.tasks import crawl_twitter, dates_list
 from twitter_xpath import *
 
 def main():
-    path = "/home/shihhao/results"
-    os.mkdir(path)
+    path = Path("/home/shihhao/results").mkdir()
     date_format = "%Y/%m/%d"
 
     for since, until in dates_list():
@@ -17,7 +16,7 @@ def main():
             until_xpath: until.strftime(date_format),
         }
 
-        task = crawl_twitter.apply_async(form_data,
+        task = crawl_twitter.apply_async((form_data,),
                                          task_id=since.strftime(date_format))
 
         with open(f"{path}/{since.strftime(date_format)}", 'w') as f:

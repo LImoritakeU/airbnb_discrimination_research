@@ -30,7 +30,7 @@ def make_driver():
     f_options.set_headless(headless=True)
 
     c_options = ChromeOptions()
-    # c_options.add_argument("--headless")
+    c_options.add_argument("--headless")
     c_options.add_argument("start-maximized")
     c_options.add_argument("disable-infobars")
     c_options.add_argument("--disable-extensions")
