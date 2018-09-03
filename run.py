@@ -1,26 +1,36 @@
-from celery import group
 from pathlib import Path
 
 from airbnb.tasks import crawl_twitter, dates_list
 from twitter_xpath import *
 
-def main():
-    path = Path("/home/shihhao/results").mkdir(exist_ok=True)
-    date_format = "%Y/%m/%d"
+path = "/home/shihhao/results"
 
+
+def custom_strftime(dt):
+    return f'{dt.year}/{dt.month}/{dt.day}'
+
+
+def main():
+    Path(path).mkdir(exist_ok=True)
+
+    ls = []
     for since, until in dates_list():
-        # print(since.strftime(date_format), until.strftime(date_format))
         form_data = {
             ands_xpath: "airbnb discrimination",
-            since_xpath: since.strftime(date_format),
-            until_xpath: until.strftime(date_format),
+            since_xpath: custom_strftime(since),
+            until_xpath: custom_strftime(until)
         }
+        result = crawl_twitter.apply_async((form_data,), task_id=since.strftime('%Y%m%d'))
+        ls.append(result)
 
-        task = crawl_twitter.apply_async((form_data,),
-                                         task_id=since.strftime(date_format))
+    while (not all([r.successful() for r in ls])) and (len(ls) > 0):
+        for r in ls:
+            if r.successful():
+                n_path = f'{path}/{r.id}'
+                with open(n_path, 'w') as f:
+                    f.write(r.result) if isinstance(r.result, str) else None
+                ls.remove(r)
 
-        with open(f"{path}/{since.strftime(date_format)}", 'w') as f:
-            f.write(task.get())
 
 
 

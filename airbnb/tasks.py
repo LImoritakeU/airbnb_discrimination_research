@@ -54,20 +54,28 @@ def process_dates():
             f.write(result.get() + '\n')
 
 
-@app.task
-def crawl_twitter(form_data: dict):
-
+@app.task(bind=True, max_retries=3, default_retry_delay=30 * 60)
+def crawl_twitter(self, form_data):
+    path = "/home/shihhao/results"
+    print(form_data)
     driver = make_driver()
     driver.get(PAGE_TWITTER_SEARCH)
-
-    submit_twitter_advance_search(driver, **form_data)
-    off_quality_filter(driver)
-
-    for i in scroll_down(driver=driver):
-        sleep(1)
-
     try:
-        return driver.find_element_by_id("timeline").get_attribute("outerHTML")
+
+        submit_twitter_advance_search(driver, **form_data)
+        off_quality_filter(driver)
+
+        for i in scroll_down(driver=driver):
+            sleep(randint(1,3))
+
+        result = driver.find_element_by_id("timeline").get_attribute("outerHTML")
+        return result
+
+    except Exception as exc:
+        print(exc)
+        raise self.retry(exc=exc)
+
+
     finally:
         driver.close()
 
@@ -79,6 +87,7 @@ def submit_twitter_advance_search(driver, **kwargs):
         key = driver.find_element_by_xpath(key)
         key.clear()
         key.send_keys(value)
+        sleep(1)
 
 
     ele = driver.find_element_by_xpath(button_xpath)
