@@ -53,7 +53,7 @@ def process_dates():
             f.write(result.get() + '\n')
 
 
-@app.task(bind=True, max_retries=3, default_retry_delay=30 * 60)
+@app.task(bind=True)
 def crawl_twitter(self, form_data):
     print(form_data)
     driver = make_driver()
