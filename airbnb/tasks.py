@@ -12,8 +12,7 @@ from selenium.webdriver.support import ui, expected_conditions as EC
 from celery import group
 
 from airbnb import app
-
-chrome_driver_path = Path.cwd() / "chromedriver"
+from conf import chrome_driver_path
 
 search_filter_collapsed_xpath = "//div[contains(@class, 'is-collapsed') and contains(@class, 'SidebarFilterModule')]"
 quality_filter_xpath = "//div[@data-filter-type='quality']/select/option[@data-nav='search_filter_quality_off']"
@@ -56,7 +55,6 @@ def process_dates():
 
 @app.task(bind=True, max_retries=3, default_retry_delay=30 * 60)
 def crawl_twitter(self, form_data):
-    path = "/home/shihhao/results"
     print(form_data)
     driver = make_driver()
     driver.get(PAGE_TWITTER_SEARCH)

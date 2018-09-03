@@ -1,5 +1,7 @@
 from celery import Celery
 
-redis = "redis://localhost:6379/0"
+from conf import redis_url
+
+redis = redis_url
 app = Celery("airbnb", broker=redis, backend=redis,
              include=['airbnb.tasks'])

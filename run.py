@@ -1,9 +1,10 @@
 from pathlib import Path
 
 from airbnb.tasks import crawl_twitter, dates_list
+from conf import result_path
 from twitter_xpath import *
 
-path = "/home/shihhao/results"
+path = result_path
 
 
 def custom_strftime(dt):
