@@ -16,7 +16,7 @@ click==6.7
 colorama==0.3.9
 coloredlogs==10.0
 constantly==15.1.0
-cryptography==2.3.1
+cryptography==3.2
 cssselect==1.0.3
 decorator==4.3.0
 doc2dash==2.2.0
